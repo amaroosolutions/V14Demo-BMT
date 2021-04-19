@@ -19,6 +19,7 @@
             <xpath expr="//field[@name='line_ids']//tree//field[@name='account_id']" position="after">
                 <field name="user_amount" invisible="1"/>
                 <field name="user_currency_id" invisible="1"/>
+                <field name="exchange_rate"  invisible="1"/>
             </xpath>
         </field>
     </record>
