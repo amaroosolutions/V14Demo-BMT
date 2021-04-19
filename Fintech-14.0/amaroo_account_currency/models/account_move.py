@@ -13,6 +13,27 @@ class AccountMoveLine(models.Model):
     user_amount = fields.Float(string="User Amount")
     exchange_rate = fields.Float(string="Exchange Rate", digits=0, default=1.0)
 
+    @api.onchange('exchange_rate', 'user_amount')
+    def _onchange_user_data(self):
+        if self.exchange_rate and self.user_amount:
+            self.price_unit = self.exchange_rate * self.user_amount
+        else:
+            self.price_unit = self._get_computed_price_unit()
+
+    @api.onchange('currency_id')
+    def _onchange_currency(self):
+        for line in self:
+            company = line.move_id.company_id
+
+            if line.move_id.is_invoice(include_receipts=True):
+                line._onchange_price_subtotal()
+                line.update_currency_rates()
+                line._onchange_user_data()
+            elif not line.move_id.reversed_entry_id:
+                balance = line.currency_id._convert(line.amount_currency, company.currency_id, company, line.move_id.date or fields.Date.context_today(line))
+                line.debit = balance if balance > 0.0 else 0.0
+                line.credit = -balance if balance < 0.0 else 0.0
+
     def update_currency_rates_manually(self):
         self.ensure_one()
         if not (self.company_id.update_currency_rates()):
