@@ -1,4 +1,0 @@
-[submodule "amaroosolutions/fintech"]
-	path = amaroosolutions/fintech
-	url = git@github.com:amaroosolutions/fintech.git
-	branch = 14.0
