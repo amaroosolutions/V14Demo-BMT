@@ -21,9 +21,12 @@ class AccountMoveLine(models.Model):
             self.price_unit = self._get_computed_price_unit()
 
     @api.onchange('user_currency_id')
-    def _onchange_user_currency_id(self):
+    def onchange_user_currency_id(self):
         if self.user_currency_id:
             self.update_currency_rates()
+
+    def button_onchange_user_currency_id(self):
+        self.with_context(check_move_validity=False).update_currency_rates()
 
     @api.onchange('currency_id')
     def _onchange_currency(self):
@@ -116,6 +119,7 @@ class AccountMoveLine(models.Model):
                 rate_value = rate/base_currency_rate
                 if currency == line.user_currency_id.name:
                     line.exchange_rate = rate_value
+                    line.price_unit = rate_value * line.user_amount
 
     @api.model
     def _get_price_total_and_subtotal_model(self, price_unit, quantity, discount, currency, product, partner, taxes, move_type):

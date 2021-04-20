@@ -10,7 +10,7 @@
                 <field name="user_amount"/>
                 <field name="user_currency_id"/>
                 <field name="exchange_rate" digits="[12,6]"/>
-                <button name="update_currency_rates"
+                <button name="button_onchange_user_currency_id"
                         string="Update Now"
                         attrs="{'invisible': [('user_currency_id', '=', False)]}"
                         type="object"
